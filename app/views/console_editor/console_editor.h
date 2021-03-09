@@ -1,5 +1,7 @@
 #pragma once
+
 #include "app/util/point/point.h"
+
 namespace NConsoleEditor {
 	enum ConsoleColor {
 		Black = 0,
@@ -24,9 +26,11 @@ namespace NConsoleEditor {
 	bool IsUp(const int key);
 	int GetCh();
 	void Clear();
+	void ClearAreaSquare(const TPoint& leftUpAngle, const TPoint& rightDownAngle);
 	void SetColor(const ConsoleColor textColor, const ConsoleColor backGroundColor = Black);
 	void GoToXY(const TPoint& point);
 	bool IsRight(const int key);
 	bool IsLeft(const int key);
+	TPoint GetCursorPosition();
 };
 

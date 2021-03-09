@@ -5,6 +5,7 @@
 #include "app/util/dice/dice.h"
 #include "app/util/json/json.h"
 #include "app/util/decoder/decoder.h"
+#include "app/util/point/point.h"
 
 #include <cstdio>
 #include <windows.h>
@@ -18,7 +19,8 @@ void TGame::Start() {
 	ReadConfig();
 	NConsoleEditor::SetColor(NConsoleEditor::Red);
 	
-	TMenu menu({"Новая", "Загрузить", "Сохранить", "Сохранить и выти", "Выйти"}, "");
+	NConsoleEditor::Clear();
+	TMenu menu({"Новая", "Загрузить", "Сохранить", "Сохранить и выйти", "Выйти"}, TPoint(0, 0), TPoint(15, 10));
 	
 	int n = menu.Show();
 	if (n == 0) {
@@ -37,6 +39,7 @@ void TGame::InitPlayer() {
 	std::string name;
 	std::cin >> name;
 	Player.SetName(name);
+	Player.SetFlask(2);
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
@@ -61,11 +64,15 @@ void TGame::ReadConfig() {
 
 void TGame::Run() {
 	while (true) {
+		NConsoleEditor::Clear();
+		ShowInfoAboutPlayer();
 		std::vector<std::string> vs;
 		for (const auto& s: Levels[CurrentLevel].GetOptions()) {
 			vs.push_back(s.second);
 		}
-		TMenu menu(vs, Levels[CurrentLevel].GetText());
+		std::cout << Levels[CurrentLevel].GetText() << std::endl;
+		auto currentPoint = NConsoleEditor::GetCursorPosition();
+		TMenu menu(vs, TPoint(currentPoint.X, currentPoint.Y + 1), TPoint(currentPoint.X + 10, currentPoint.Y + 5));
 		int chosen = menu.Show();
 		CurrentLevel = Levels[CurrentLevel].GetOptions()[chosen].first;
 	}

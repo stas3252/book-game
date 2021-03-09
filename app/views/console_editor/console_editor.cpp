@@ -2,6 +2,7 @@
 
 #include <conio.h>
 #include <windows.h>
+#include <iostream>
 
 bool NConsoleEditor::IsEnter(const int key) {
 	return key == 13;
@@ -47,4 +48,20 @@ void NConsoleEditor::GoToXY(const TPoint& point) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), kursor);
 }
 
+void NConsoleEditor::ClearAreaSquare(const TPoint& leftUpAngle, const TPoint& rightDownAngle) {
+	for (int i = leftUpAngle.Y; i <= rightDownAngle.Y; ++i) {
+		for (int j = leftUpAngle.X; j<= rightDownAngle.X; ++j) {
+			GoToXY(TPoint(j, i));
+			std::cout << " ";
+		}
+	}
+}
 
+TPoint NConsoleEditor::GetCursorPosition() {
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO cbsi;
+	if (!GetConsoleScreenBufferInfo(hConsole, &cbsi)) {
+		throw "Error with cursor";
+	}
+	return TPoint(cbsi.dwCursorPosition.X, cbsi.dwCursorPosition.Y);
+}

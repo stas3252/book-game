@@ -10,4 +10,5 @@ target_link_libraries(game PUBLIC
 	decoder
 	player
 	level
+	point
 )
