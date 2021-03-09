@@ -1,6 +1,7 @@
 #pragma once
 
 struct TPoint {
+public:
 	int X;
 	int Y;
 	TPoint();

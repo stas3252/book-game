@@ -3,20 +3,21 @@
 
 #include <iostream>
 
-TMenu::TMenu(const std::vector<std::string>& options, const std::string& header): Options(options), Header(header) {}
+TMenu::TMenu(const std::vector<std::string>& options, const TPoint& leftUpAngle, const TPoint& rightDownAngle) : 
+	Options(options), LeftUpAngle(leftUpAngle), RightDownAngle(rightDownAngle) {}
 
 int TMenu::Show() const {
 	int currentOption = 0;
 	while (true) { 
-	NConsoleEditor::Clear();
-	std::cout << Header << std::endl;
+	NConsoleEditor::ClearAreaSquare(LeftUpAngle, RightDownAngle);
 		for (size_t i = 0; i < Options.size(); i++) {
+			NConsoleEditor::GoToXY(TPoint(LeftUpAngle.X, LeftUpAngle.Y + i));
 			if (i == currentOption) {
 				NConsoleEditor::SetColor(NConsoleEditor::White);
-				std::cout << Options[i] << std::endl;
+				std::cout << Options[i];
 				NConsoleEditor::SetColor(NConsoleEditor::Red);
 			} else {	
-				std::cout << Options[i] << std::endl;
+				std::cout << Options[i];
 			}
 		}
 		int key = NConsoleEditor::GetCh();
@@ -35,4 +36,12 @@ int TMenu::Show() const {
 		};
 	}
 	return currentOption;
+}
+
+TPoint TMenu::GetLeftUpAngle() const {
+	return LeftUpAngle;
+}
+
+TPoint TMenu::GetRightDownAngle() const {
+	return RightDownAngle;
 }
