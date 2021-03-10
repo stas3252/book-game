@@ -3,11 +3,35 @@
 #include "app/util/dice/dice.h"
 
 #include <algorithm>
+#include <iostream>
 
-TPlayer::TPlayer(): Luck(std::vector<bool>(6, true)), Gold(15) {}
+TPlayer::TPlayer(): Luck(std::vector<bool>(6, true)) {}
 
 const std::string& TPlayer::GetName() const {
 	return UserName;
+}
+
+void TPlayer::SetAmountItems() {
+	Items.resize(7, nullptr);
+}
+void TPlayer::AddItem(const int position, const std::string& nameItem) {
+	if (position >= 0 && position < 7) {
+		if (nameItem == "Åäà") {
+			Items[position] = new TFood(nameItem, nameItem, 3);
+		}
+	} else {
+		throw "addItem unreal position, position diapason (0 - 7)";
+	}
+}
+void RemoveItem(const int position) {
+	if (position >= 0 && position < 7) {
+		void RemoveItem(const int position);
+	} else {
+		throw "RemoveItem unreal position, position diapason (0 - 7)";
+	}
+}
+const std::vector<TItem*>& TPlayer::GetItems() const {
+	return Items;
 }
 
 int TPlayer::GetAgility() const {

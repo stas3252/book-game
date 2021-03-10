@@ -20,7 +20,7 @@ void TGame::Start() {
 	NConsoleEditor::SetColor(NConsoleEditor::Red);
 	
 	NConsoleEditor::Clear();
-	TMenu menu({"Новая", "Загрузить", "Сохранить", "Сохранить и выйти", "Выйти"}, TPoint(0, 0), TPoint(15, 10));
+	TMenu menu({"Новая", "Загризить", "Сохранить", "Сохранить и выйти", "Выйти"}, TPoint(0, 0), TPoint(15, 10));
 	
 	int n = menu.Show();
 	if (n == 0) {
@@ -39,7 +39,10 @@ void TGame::InitPlayer() {
 	std::string name;
 	std::cin >> name;
 	Player.SetName(name);
+	Player.SetGold(15);
 	Player.SetFlask(2);
+	Player.SetAmountItems();
+	Player.AddItem(0, "Еда");
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
@@ -71,6 +74,7 @@ void TGame::Run() {
 			vs.push_back(s.second);
 		}
 		std::cout << Levels[CurrentLevel].GetText() << std::endl;
+		std::cout << "_______________________________" << std::endl;
 		auto currentPoint = NConsoleEditor::GetCursorPosition();
 		TMenu menu(vs, TPoint(currentPoint.X, currentPoint.Y + 1), TPoint(currentPoint.X + 10, currentPoint.Y + 5));
 		int chosen = menu.Show();
@@ -80,25 +84,33 @@ void TGame::Run() {
 
 void TGame::ShowInfoAboutPlayer() const {
 	std::cout << "Имя: " << Player.GetName() <<", Золото: " << Player.GetGold() << ", Фляга: " << Player.GetFlask()
-		<< ", Ловкость: " << Player.GetAgility() << ", Сила: " << Player.GetStrength() << ", Харизма: " << Player.GetCharisma() 
+		<< ", Ловкость: " << Player.GetAgility() << ", Сила: " << Player.GetStrength() << ", Харзма: " << Player.GetCharisma() 
 		<< std::endl;
 		std::cout << "Заклинания:" << std::endl;
 	for (const auto& spell: Player.GetSpells()) {
 		std::cout << spell.first << " " << spell.second << std::endl;
 	}
+	for (const auto& item: Player.GetItems()) {
+		if (item != nullptr) {
+			std::cout << item->GetName() << " " << item->GetCode() << std::endl;
+		} else {
+			std::cout << "Пусто" << std::endl;
+		}
+	}
+	std::cout << "_________________________" << std::endl;
 }
 
 void TGame::InitSpells() {
 	std::vector<std::pair<std::string, int> > spells = {
-		{"Заклятие левитации", 0},
-		{"Заклятие огня", 0},
-		{"Заклятие иллюзии", 0},
-		{"Заклятие силы", 0},
-		{"Заклятие слабости", 0},
-		{"Заклятие копии", 0},
-		{"Заклятие исцеления", 0},
-		{"Заклятие плавания", 0}};
-	std::string header = "выберите заклинания!";
+		{"а", 0},
+		{"б", 0},
+		{"в", 0},
+		{"г", 0},
+		{"д", 0},
+		{"е", 0},
+		{"ё", 0},
+		{"ж", 0}};
+	std::string header = "Выберите заклинания!";
 	int currentOption = 0;
 	const int maxWidget = 10;
 	int currentWidget = 0;

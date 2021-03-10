@@ -4,6 +4,10 @@
 #include <tuple>
 #include <vector>
 #include <unordered_map>
+#include <cstddef>
+
+#include "app/models/items/item.h"
+#include "app/models/items/food.h"
 
 class TPlayer {
 private:
@@ -16,11 +20,17 @@ private:
 	int MaxStrength;
 	std::vector<bool> Luck;
 	std::unordered_map<std::string, int> Spells;
+	std::vector<TItem*> Items;
 public:
 	TPlayer();
 	const std::string& GetName() const;
 	void SetName(const std::string& userName);
 	
+	void SetAmountItems();
+	void AddItem(const int position, const std::string& nameItem);
+	void RemoveItem(const int position);
+	const std::vector<TItem*>& GetItems() const;
+
 	void LockLuck(const int);
 	int GetAgility() const;
 	int GetStrength() const;
