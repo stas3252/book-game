@@ -4,4 +4,5 @@ add_library(player STATIC
 
 target_link_libraries(player PUBLIC
 	dice
+	items
 )
