@@ -82,6 +82,10 @@ void TGame::ShowInfoAboutPlayer() const {
 	std::cout << "Имя: " << Player.GetName() <<", Золото: " << Player.GetGold() << ", Фляга: " << Player.GetFlask()
 		<< ", Ловкость: " << Player.GetAgility() << ", Сила: " << Player.GetStrength() << ", Харизма: " << Player.GetCharisma() 
 		<< std::endl;
+		std::cout << "Заклинания:" << std::endl;
+	for (const auto& spell: Player.GetSpells()) {
+		std::cout << spell.first << " " << spell.second << std::endl;
+	}
 }
 
 void TGame::InitSpells() {
@@ -134,6 +138,11 @@ void TGame::InitSpells() {
 		}
 		if (NConsoleEditor::IsEnter(key)) {
 			if (currentWidget == 10) {
+				for (const auto& spell: spells) {
+					if (spell.second) {
+						Player.AddSpell(spell);
+					}
+				}
 				break;
 			}	
 		}

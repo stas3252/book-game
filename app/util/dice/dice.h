@@ -2,4 +2,5 @@
 
 namespace NDice {
 	int Roll6();
-};
+}
+

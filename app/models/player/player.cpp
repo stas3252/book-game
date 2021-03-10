@@ -2,8 +2,6 @@
 
 #include "app/util/dice/dice.h"
 
-#include <iostream>
-#include <vector>
 #include <algorithm>
 
 TPlayer::TPlayer(): Luck(std::vector<bool>(6, true)), Gold(15) {}
@@ -100,5 +98,13 @@ void TPlayer::SetCharacteristics() {
 
 void TPlayer::LockLuck(const int roll) {
 	Luck[roll - 1] = false;
+}
+
+void TPlayer::AddSpell(const std::pair<std::string, int>& spell) {
+	Spells[spell.first] = spell.second;
+}
+
+std::unordered_map<std::string, int> TPlayer::GetSpells() const {
+	return Spells;
 }
 
