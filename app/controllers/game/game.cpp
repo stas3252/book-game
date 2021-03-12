@@ -1,11 +1,12 @@
 #include "game.h"
-
 #include "app/views/console_editor/console_editor.h"
 #include "app/views/menu/menu.h"
 #include "app/util/dice/dice.h"
 #include "app/util/json/json.h"
 #include "app/util/decoder/decoder.h"
 #include "app/util/point/point.h"
+#include "app/controllers/actions/action.h"
+#include "app/controllers/actions/add_strength.h"
 
 #include <cstdio>
 #include <windows.h>
@@ -20,7 +21,7 @@ void TGame::Start() {
 	NConsoleEditor::SetColor(NConsoleEditor::Red);
 	
 	NConsoleEditor::Clear();
-	TMenu menu({"Новая", "Загризить", "Сохранить", "Сохранить и выйти", "Выйти"}, TPoint(0, 0), TPoint(15, 10));
+	TMenu menu({"РќРѕРІР°СЏ РёРіСЂР°", "Г‡Г ГЈГ°ГЁГ§ГЁГІГј", "Г‘Г®ГµГ°Г Г­ГЁГІГј", "Г‘Г®ГµГ°Г Г­ГЁГІГј ГЁ ГўГ»Г©ГІГЁ", "Г‚Г»Г©ГІГЁ"}, TPoint(0, 0), TPoint(15, 10));
 	
 	int n = menu.Show();
 	if (n == 0) {
@@ -35,14 +36,14 @@ void TGame::New() {
 }
 
 void TGame::InitPlayer() {
-	std::cout << "Имя: ";
+	std::cout << "Р’РІРµРґРёС‚Рµ РёРјСЏ: ";
 	std::string name;
 	std::cin >> name;
 	Player.SetName(name);
 	Player.SetGold(15);
 	Player.SetFlask(2);
 	Player.SetAmountItems();
-	Player.AddItem(0, "Еда");
+	Player.AddItem(0, "Г…Г¤Г ");
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
@@ -52,16 +53,28 @@ void TGame::InitPlayer() {
 void TGame::ReadConfig() {
 	std::ifstream file("../config.json");
 	std::string s, res;
+
 	while (getline(file, s)) {
 		res += s;
 	}
-	NJson::TJsonValue data = NJson::TJsonValue::parse(NDecoder::ToUtf8(res));
+	NJson::TJsonValue data = NJson::TJsonValue::parse(res);
+
 	for (const auto& d: data) {
 		std::vector<std::pair<int, std::string>> options;
+		std::vector<std::shared_ptr<TAction>> actions;
 		for (const auto& op: d["options"]) {
-			options.emplace_back(op["to"], NDecoder::FromUtf8(op["text"]));
+			options.emplace_back(op["to"], op["text"]);
 		}
-		Levels[d["id"]] = TLevel(NDecoder::FromUtf8(d["text"]), options);
+		if (d.find("actions") != d.end()) {
+			for (const auto& act: d["actions"]) {
+				std::shared_ptr<TAction> currentAction;
+				if (act["name"] == "add_strength") {
+					currentAction = std::make_shared<TAddStrengthAction>(act["amount"]);
+				}
+				actions.push_back(std::move(currentAction));
+			}	
+		}
+		Levels[d["id"]] = TLevel(d["text"], options, actions);
 	}
 }
 
@@ -83,10 +96,10 @@ void TGame::Run() {
 }
 
 void TGame::ShowInfoAboutPlayer() const {
-	std::cout << "Имя: " << Player.GetName() <<", Золото: " << Player.GetGold() << ", Фляга: " << Player.GetFlask()
-		<< ", Ловкость: " << Player.GetAgility() << ", Сила: " << Player.GetStrength() << ", Харзма: " << Player.GetCharisma() 
+	std::cout << "Г€Г¬Гї: " << Player.GetName() <<", Г‡Г®Г«Г®ГІГ®: " << Player.GetGold() << ", Г”Г«ГїГЈГ : " << Player.GetFlask()
+		<< ", Г‹Г®ГўГЄГ®Г±ГІГј: " << Player.GetAgility() << ", Г‘ГЁГ«Г : " << Player.GetStrength() << ", Г•Г Г°Г§Г¬Г : " << Player.GetCharisma() 
 		<< std::endl;
-		std::cout << "Заклинания:" << std::endl;
+		std::cout << "Г‡Г ГЄГ«ГЁГ­Г Г­ГЁГї:" << std::endl;
 	for (const auto& spell: Player.GetSpells()) {
 		std::cout << spell.first << " " << spell.second << std::endl;
 	}
@@ -94,7 +107,7 @@ void TGame::ShowInfoAboutPlayer() const {
 		if (item != nullptr) {
 			std::cout << item->GetName() << " " << item->GetCode() << std::endl;
 		} else {
-			std::cout << "Пусто" << std::endl;
+			std::cout << "ГЏГіГ±ГІГ®" << std::endl;
 		}
 	}
 	std::cout << "_________________________" << std::endl;
@@ -102,15 +115,15 @@ void TGame::ShowInfoAboutPlayer() const {
 
 void TGame::InitSpells() {
 	std::vector<std::pair<std::string, int> > spells = {
-		{"а", 0},
-		{"б", 0},
-		{"в", 0},
-		{"г", 0},
-		{"д", 0},
-		{"е", 0},
-		{"ё", 0},
-		{"ж", 0}};
-	std::string header = "Выберите заклинания!";
+		{"Г ", 0},
+		{"ГЎ", 0},
+		{"Гў", 0},
+		{"ГЈ", 0},
+		{"Г¤", 0},
+		{"ГҐ", 0},
+		{"Вё", 0},
+		{"Г¦", 0}};
+	std::string header = "Г‚Г»ГЎГҐГ°ГЁГІГҐ Г§Г ГЄГ«ГЁГ­Г Г­ГЁГї!";
 	int currentOption = 0;
 	const int maxWidget = 10;
 	int currentWidget = 0;

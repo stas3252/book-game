@@ -1,10 +1,19 @@
 #include "level.h"
 
-TLevel::TLevel(const std::string& text, const std::vector<std::pair<int, std::string>>& options): Text(text), Options(options) {};
+TLevel::TLevel(
+	const std::string& text,
+	const std::vector<std::pair<int, std::string>>& options,
+	const std::vector<std::shared_ptr<TAction>>& actions
+): Text(text), Options(options), Actions(actions) {}
 
-std::vector<std::pair<int, std::string>> TLevel::GetOptions() {
+const std::vector<std::pair<int, std::string>>& TLevel::GetOptions() const {
 	return Options;
-};
-std::string TLevel::GetText() {
+}
+
+const std::string& TLevel::GetText() const {
 	return Text;
+}
+
+const std::vector<std::shared_ptr<TAction>>& TLevel::GetActions() const {
+	return Actions;
 }

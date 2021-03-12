@@ -4,17 +4,13 @@
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
-// #pragma execution_character_ser("utf-8")
-
 int main(int argc, char** argv) {
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+	// SetConsoleCP(1251);
+	// SetConsoleOutputCP(1251);
 
-//	SetConsoleCP(65001);
-//	SetConsoleOutputCP(65001);
-	
-	srand(time(0)); 
-
+	SetConsoleCP(65001);
+	SetConsoleOutputCP(65001);
+	srand(time(0));
 	TGame game(1);
 	game.Start();
 	return 0;

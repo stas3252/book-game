@@ -11,4 +11,5 @@ target_link_libraries(game PUBLIC
 	player
 	level
 	point
+	actions
 )
