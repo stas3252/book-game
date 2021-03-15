@@ -16,7 +16,7 @@ void TPlayer::SetAmountItems() {
 }
 void TPlayer::AddItem(const int position, const std::string& nameItem) {
 	if (position >= 0 && position < 7) {
-		if (nameItem == "Åäà") {
+		if (nameItem == "Ð•Ð´Ð°") {
 			Items[position] = new TFood(nameItem, nameItem, 3);
 		}
 	} else {
@@ -132,3 +132,17 @@ std::unordered_map<std::string, int> TPlayer::GetSpells() const {
 	return Spells;
 }
 
+bool TPlayer::HasSpell(const std::string& nameSpell) const {
+	auto spell = Spells.find(nameSpell);
+	return spell != Spells.end();
+}
+
+void TPlayer::UseSpell(const std::string& nameSpell) {
+	if (!HasSpell(nameSpell)) {
+		throw "not use spell";
+	} 
+	auto currentSpell = Spells.find(nameSpell);
+	if (--currentSpell->second == 0) {
+		Spells.erase(currentSpell);
+	}
+}

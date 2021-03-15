@@ -55,4 +55,6 @@ public:
 
 	void AddSpell(const std::pair<std::string, int>& spell);
 	std::unordered_map<std::string, int> GetSpells() const;
+	bool HasSpell(const std::string& nameSpell) const;
+	void UseSpell(const std::string& nameSpell);
 };

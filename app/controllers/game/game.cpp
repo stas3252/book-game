@@ -7,6 +7,7 @@
 #include "app/util/point/point.h"
 #include "app/controllers/actions/action.h"
 #include "app/controllers/actions/add_strength.h"
+#include "app/models/option/option.h"
 
 #include <cstdio>
 #include <windows.h>
@@ -21,9 +22,9 @@ void TGame::Start() {
 	NConsoleEditor::SetColor(NConsoleEditor::Red);
 	
 	NConsoleEditor::Clear();
-	TMenu menu({"Новая игра", "Çàãðèçèòü", "Ñîõðàíèòü", "Ñîõðàíèòü è âûéòè", "Âûéòè"}, TPoint(0, 0), TPoint(15, 10));
+	TMenu menu({"Новая игра", "Загрузить", "Сохранить", "Сохранить и выйти", "Выйти"}, TPoint(0, 0), TPoint(15, 10));
 	
-	int n = menu.Show();
+	int n = menu.Show(); 
 	if (n == 0) {
 		New();
 	}
@@ -43,7 +44,7 @@ void TGame::InitPlayer() {
 	Player.SetGold(15);
 	Player.SetFlask(2);
 	Player.SetAmountItems();
-	Player.AddItem(0, "Åäà");
+	Player.AddItem(0, "Еда");
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
@@ -60,11 +61,21 @@ void TGame::ReadConfig() {
 	NJson::TJsonValue data = NJson::TJsonValue::parse(res);
 
 	for (const auto& d: data) {
-		std::vector<std::pair<int, std::string>> options;
+		std::vector<TOption> options;
 		std::vector<std::shared_ptr<TAction>> actions;
+
 		for (const auto& op: d["options"]) {
-			options.emplace_back(op["to"], op["text"]);
+			if (op.find("price") != op.end()) {
+				std::vector<std::pair<std::string, std::string>> price;
+				for (const auto& pr: op["price"]) {
+					price.emplace_back(pr["type"], pr["value"]);
+				}
+				options.emplace_back(op["to"], op["text"], price);
+			} else {
+				options.emplace_back(op["to"], op["text"]);
+			}
 		}
+
 		if (d.find("actions") != d.end()) {
 			for (const auto& act: d["actions"]) {
 				std::shared_ptr<TAction> currentAction;
@@ -83,31 +94,38 @@ void TGame::Run() {
 		NConsoleEditor::Clear();
 		ShowInfoAboutPlayer();
 		std::vector<std::string> vs;
+		//переходы
 		for (const auto& s: Levels[CurrentLevel].GetOptions()) {
-			vs.push_back(s.second);
+			vs.push_back(s.Text);
 		}
+		Levels[CurrentLevel].DoActions(Player);
+		//-----------------------------------------------------
 		std::cout << Levels[CurrentLevel].GetText() << std::endl;
 		std::cout << "_______________________________" << std::endl;
 		auto currentPoint = NConsoleEditor::GetCursorPosition();
 		TMenu menu(vs, TPoint(currentPoint.X, currentPoint.Y + 1), TPoint(currentPoint.X + 10, currentPoint.Y + 5));
 		int chosen = menu.Show();
-		CurrentLevel = Levels[CurrentLevel].GetOptions()[chosen].first;
+		
+		// где-то тут сделать проверку (можно ли перейти на след lvl)
+		CurrentLevel = Levels[CurrentLevel].GetOptions()[chosen].To;
 	}
 }
 
 void TGame::ShowInfoAboutPlayer() const {
-	std::cout << "Èìÿ: " << Player.GetName() <<", Çîëîòî: " << Player.GetGold() << ", Ôëÿãà: " << Player.GetFlask()
-		<< ", Ëîâêîñòü: " << Player.GetAgility() << ", Ñèëà: " << Player.GetStrength() << ", Õàðçìà: " << Player.GetCharisma() 
+	std::cout << "Имя: " << Player.GetName() <<", Золото: " << Player.GetGold() << ", Фляга: " << Player.GetFlask()
+		<< ", Ловкость: " << Player.GetAgility() << ", Сила: " << Player.GetStrength() << ", Харизма " << Player.GetCharisma() 
 		<< std::endl;
-		std::cout << "Çàêëèíàíèÿ:" << std::endl;
+		std::cout << "Заклинания:" << std::endl;
 	for (const auto& spell: Player.GetSpells()) {
 		std::cout << spell.first << " " << spell.second << std::endl;
 	}
+	std::cout << "_________________________" << std::endl;
+	std::cout << "Рюкзак:" << std::endl;
 	for (const auto& item: Player.GetItems()) {
 		if (item != nullptr) {
 			std::cout << item->GetName() << " " << item->GetCode() << std::endl;
 		} else {
-			std::cout << "Ïóñòî" << std::endl;
+			std::cout << "Пусто" << std::endl;
 		}
 	}
 	std::cout << "_________________________" << std::endl;
@@ -115,15 +133,16 @@ void TGame::ShowInfoAboutPlayer() const {
 
 void TGame::InitSpells() {
 	std::vector<std::pair<std::string, int> > spells = {
-		{"à", 0},
-		{"á", 0},
-		{"â", 0},
-		{"ã", 0},
-		{"ä", 0},
-		{"å", 0},
-		{"¸", 0},
-		{"æ", 0}};
-	std::string header = "Âûáåðèòå çàêëèíàíèÿ!";
+		{"а", 0},
+		{"б", 0},
+		{"в", 0},
+		{"г", 0},
+		{"д", 0},
+		{"е", 0},
+		{"ё", 0},
+		{"ж", 0}
+	};
+	std::string header = "Выберите заклинания!";
 	int currentOption = 0;
 	const int maxWidget = 10;
 	int currentWidget = 0;

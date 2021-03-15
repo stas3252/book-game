@@ -12,4 +12,5 @@ target_link_libraries(game PUBLIC
 	level
 	point
 	actions
+	option
 )

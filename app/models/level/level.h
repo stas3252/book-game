@@ -4,20 +4,23 @@
 #include <memory>
 
 #include "app/controllers/actions/action.h"
+#include "app/models/option/option.h"
+#include "app/models/player/player.h"
 
 class TLevel {
 private:
 	std::string Text;
-	std::vector<std::pair<int, std::string>> Options;
+	std::vector<TOption> Options;
 	std::vector<std::shared_ptr<TAction>> Actions;
 public:
 	TLevel() = default;
 	TLevel(
 		const std::string& text,
-		const std::vector<std::pair<int, std::string>>& options,
+		const std::vector<TOption>& options,
 		const std::vector<std::shared_ptr<TAction>>& actions
 	);
-	const std::vector<std::pair<int, std::string>>& GetOptions() const;
+	const std::vector<TOption>& GetOptions() const;
 	const std::string& GetText() const;
 	const std::vector<std::shared_ptr<TAction>>& GetActions() const;
+	void DoActions(TPlayer&);
 };
