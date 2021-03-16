@@ -95,7 +95,8 @@ void TGame::Run() {
 		ShowInfoAboutPlayer();
 		std::vector<std::string> vs;
 		//переходы
-		for (const auto& s: Levels[CurrentLevel].GetOptions()) {
+		auto currentOptions = Levels[CurrentLevel].GetOptions();
+		for (const auto& s: currentOptions) {
 			vs.push_back(s.Text);
 		}
 		Levels[CurrentLevel].DoActions(Player);
@@ -107,7 +108,19 @@ void TGame::Run() {
 		int chosen = menu.Show();
 		
 		// где-то тут сделать проверку (можно ли перейти на след lvl)
-		CurrentLevel = Levels[CurrentLevel].GetOptions()[chosen].To;
+		bool next = true;
+		for (const auto& option: currentOptions) {
+			if (!option.CanBeChoosen(Player)) {
+				next = false;
+			}
+		}
+		if (next) {
+			for (const auto& option: currentOptions) {
+				option.Pay(Player);
+			}
+			CurrentLevel = currentOptions[chosen].To;	
+		}
+		
 	}
 }
 
@@ -133,14 +146,14 @@ void TGame::ShowInfoAboutPlayer() const {
 
 void TGame::InitSpells() {
 	std::vector<std::pair<std::string, int> > spells = {
-		{"а", 0},
-		{"б", 0},
-		{"в", 0},
-		{"г", 0},
-		{"д", 0},
-		{"е", 0},
-		{"ё", 0},
-		{"ж", 0}
+		{ "Заклятие левитации", 0},
+		{ "Заклятие Огня", 0 },
+		{ "Заклятие Иллюзии" , 0},
+		{ "Заклятие Ловкости", 0},
+		{ "Заклятие Слабости", 0},
+		{ "Заклятие Копии", 0},
+		{ "Заклятие Исцеления", 0},
+		{ "Заклятие Плавания", 0}
 	};
 	std::string header = "Выберите заклинания!";
 	int currentOption = 0;
