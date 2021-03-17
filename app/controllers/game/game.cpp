@@ -2,7 +2,7 @@
 #include "app/views/console_editor/console_editor.h"
 #include "app/views/menu/menu.h"
 #include "app/util/dice/dice.h"
-#include "app/util/json/json.h"
+#include "library/json/json.h"
 #include "app/util/decoder/decoder.h"
 #include "app/util/point/point.h"
 #include "app/controllers/actions/action.h"
@@ -37,9 +37,9 @@ void TGame::New() {
 }
 
 void TGame::InitPlayer() {
-	std::cout << "Введите имя: ";
-	std::string name;
-	std::cin >> name;
+//	std::cout << "Введите имя: ";
+	std::string name = "Stas";
+//	std::cin >> name;
 	Player.SetName(name);
 	Player.SetGold(15);
 	Player.SetFlask(2);
@@ -48,7 +48,7 @@ void TGame::InitPlayer() {
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
-	InitSpells();
+	//InitSpells();
 }
 
 void TGame::ReadConfig() {
@@ -206,3 +206,7 @@ void TGame::InitSpells() {
 	return;
 }
 
+
+const TPlayer& TGame::GetPlayer() const {
+	return Player;
+}

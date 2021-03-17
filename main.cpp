@@ -1,4 +1,5 @@
 #include "app/controllers/game/game.h"
+#include "sources/application/application.h"
 #include <windows.h>
 #include <time.h>
 
@@ -11,7 +12,10 @@ int main(int argc, char** argv) {
 	SetConsoleCP(65001);
 	SetConsoleOutputCP(65001);
 	srand(time(0));
-	TGame game(1);
-	game.Start();
+	std::unique_ptr<TApplication> application;
+	application.reset(new TApplication());
+	application->Start();
+	//TGame game(1);
+	//game.Start();
 	return 0;
 }

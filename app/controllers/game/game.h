@@ -21,5 +21,6 @@ public:
 	void InitSpells();
 	void InitPlayer();
 	void ShowInfoAboutPlayer() const;
+	const TPlayer& GetPlayer() const;
 };
 

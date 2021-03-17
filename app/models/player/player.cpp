@@ -146,3 +146,17 @@ void TPlayer::UseSpell(const std::string& nameSpell) {
 		Spells.erase(currentSpell);
 	}
 }
+
+NJson::TJsonValue TPlayer::ToJson() const {
+	return {
+		{"Name", UserName}, 
+		{"Gold", Gold},
+		{"Flask", Flask},
+		{"Agility", Agility},
+		{"Strength", Strength},
+		{"MaxStrength", MaxStrength},
+		{"Luck", Luck},
+		{"Spells", Spells},
+		//{"Items", Items}
+	};
+}
