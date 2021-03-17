@@ -120,7 +120,6 @@ void TGame::Run() {
 			}
 			CurrentLevel = currentOptions[chosen].To;	
 		}
-		
 	}
 }
 
