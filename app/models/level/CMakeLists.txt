@@ -4,4 +4,5 @@ add_library(level STATIC
 
 target_link_libraries(level PUBLIC
 	actions
+	json
 )
