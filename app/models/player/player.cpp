@@ -154,6 +154,7 @@ NJson::TJsonValue TPlayer::ToJson() const {
 		{"Flask", Flask},
 		{"Agility", Agility},
 		{"Strength", Strength},
+		{"Charisma", Charisma},
 		{"MaxStrength", MaxStrength},
 		{"Luck", Luck},
 		{"Spells", Spells},
