@@ -8,6 +8,7 @@
 
 #include "app/models/items/item.h"
 #include "app/models/items/food.h"
+#include "library/json/json.h"
 
 class TPlayer {
 private:
@@ -57,4 +58,6 @@ public:
 	std::unordered_map<std::string, int> GetSpells() const;
 	bool HasSpell(const std::string& nameSpell) const;
 	void UseSpell(const std::string& nameSpell);
+
+	NJson::TJsonValue ToJson() const;
 };

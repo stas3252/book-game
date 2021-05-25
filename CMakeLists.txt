@@ -9,6 +9,8 @@ include_directories(
 )
 
 add_subdirectory(app)
+add_subdirectory(library)
+add_subdirectory(sources)
 
 
 add_executable(book_game
@@ -17,4 +19,5 @@ add_executable(book_game
 
 target_link_libraries(book_game PUBLIC
 	game
+	application
 )

@@ -23,3 +23,14 @@ void TLevel::DoActions(TPlayer& player) {
 		act->Do(player);
 	}
 }
+
+NJson::TJsonValue TLevel::ToJson() const {
+	std::vector<std::string> vs;
+	for (const auto& s: GetOptions()) {
+		vs.push_back(s.Text);
+	}
+	return {
+		{"Text", Text},
+		{"TextOptions", vs}
+	};
+}

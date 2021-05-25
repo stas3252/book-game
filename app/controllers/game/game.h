@@ -14,12 +14,10 @@ private:
 	std::unordered_map<int, TLevel> Levels;
 public:
 	TGame(const int currentLevel = 1);
-	void Start();
-	void New();
 	void ReadConfig();
-	void Run();
-	void InitSpells();
 	void InitPlayer();
-	void ShowInfoAboutPlayer() const;
+	const TPlayer& GetPlayer() const;
+	const TLevel& GetCurrentLevel() const;
+	void UpdateLevel(const int optionId);
 };
 

@@ -6,6 +6,7 @@
 #include "app/controllers/actions/action.h"
 #include "app/models/option/option.h"
 #include "app/models/player/player.h"
+#include "library/json/json.h"
 
 class TLevel {
 private:
@@ -23,4 +24,5 @@ public:
 	const std::string& GetText() const;
 	const std::vector<std::shared_ptr<TAction>>& GetActions() const;
 	void DoActions(TPlayer&);
+	NJson::TJsonValue ToJson() const;
 };
