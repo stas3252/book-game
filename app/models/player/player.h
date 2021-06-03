@@ -4,6 +4,7 @@
 #include <tuple>
 #include <vector>
 #include <unordered_map>
+#include <set>
 #include <cstddef>
 
 #include "app/models/items/item.h"
@@ -20,7 +21,7 @@ private:
 	int Charisma;
 	int MaxStrength;
 	std::vector<bool> Luck;
-	std::unordered_map<std::string, int> Spells;
+	std::multiset<std::string> Spells;
 	std::vector<TItem*> Items;
 public:
 	TPlayer();
@@ -54,8 +55,8 @@ public:
 
 	void IncreaseStrenght(const int);
 
-	void AddSpell(const std::pair<std::string, int>& spell);
-	std::unordered_map<std::string, int> GetSpells() const;
+	void AddSpell(const std::string& spell);
+	NJson::TJsonValue GetSpellsToJson() const;
 	bool HasSpell(const std::string& nameSpell) const;
 	void UseSpell(const std::string& nameSpell);
 

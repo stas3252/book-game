@@ -15,7 +15,7 @@ private:
 public:
 	TGame(const int currentLevel = 1);
 	void ReadConfig();
-	void InitPlayer();
+	void InitPlayer(const std::vector<std::string>& spells = {});
 	const TPlayer& GetPlayer() const;
 	const TLevel& GetCurrentLevel() const;
 	void UpdateLevel(const int optionId);

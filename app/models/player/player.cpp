@@ -124,12 +124,18 @@ void TPlayer::LockLuck(const int roll) {
 	Luck[roll - 1] = false;
 }
 
-void TPlayer::AddSpell(const std::pair<std::string, int>& spell) {
-	Spells[spell.first] = spell.second;
+void TPlayer::AddSpell(const std::string& spell) {
+	Spells.insert(spell);
 }
 
-std::unordered_map<std::string, int> TPlayer::GetSpells() const {
-	return Spells;
+NJson::TJsonValue TPlayer::GetSpellsToJson() const {
+	NJson::TJsonValue spells;
+	int i = 0;
+	for (const auto& spell: Spells) {
+		spells[i] = spell;
+		i++;
+	}
+	return spells;
 }
 
 bool TPlayer::HasSpell(const std::string& nameSpell) const {
@@ -140,11 +146,9 @@ bool TPlayer::HasSpell(const std::string& nameSpell) const {
 void TPlayer::UseSpell(const std::string& nameSpell) {
 	if (!HasSpell(nameSpell)) {
 		throw "not use spell";
-	} 
-	auto currentSpell = Spells.find(nameSpell);
-	if (--currentSpell->second == 0) {
-		Spells.erase(currentSpell);
 	}
+	auto currentSpell = Spells.find(nameSpell);
+	Spells.erase(currentSpell);
 }
 
 NJson::TJsonValue TPlayer::ToJson() const {

@@ -6,4 +6,5 @@ namespace NGameHandler {
 	void ApiNewGame(TGame&, httplib::Response&);
 	void ApiLevelGet(TGame&, httplib::Response&);
 	void ApiLevelPost(TGame&, const httplib::Request&, httplib::Response&);
+	void ApiSetSpells(TGame&, const httplib::Request&, httplib::Response&);
 };

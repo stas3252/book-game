@@ -17,7 +17,7 @@
 
 TGame::TGame(const int currentLevel) : CurrentLevel(currentLevel) {}
 
-void TGame::InitPlayer() {
+void TGame::InitPlayer(const std::vector<std::string>& spells) {
 	std::string name = "Stas";
 	Player.SetName(name);
 	Player.SetGold(15);
@@ -27,6 +27,9 @@ void TGame::InitPlayer() {
 	Player.SetCharacteristics();
 	Player.LockLuck(NDice::Roll6());
 	Player.LockLuck(NDice::Roll6());
+	for(const auto& spell: spells) {
+		Player.AddSpell({spell, 1});
+	}
 }
 
 void TGame::ReadConfig() {
