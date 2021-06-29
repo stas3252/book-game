@@ -11,28 +11,52 @@ const std::string& TPlayer::GetName() const {
 	return UserName;
 }
 
-void TPlayer::SetAmountItems() {
-	Items.resize(7, nullptr);
+void TPlayer::AddExtraInfo(const std::string& info) {
+	ExtraInfo.insert(info);
 }
-void TPlayer::AddItem(const int position, const std::string& nameItem) {
-	if (position >= 0 && position < 7) {
-		if (nameItem == "Еда") {
-			Items[position] = new TFood(nameItem, nameItem, 3);
-		}
-	} else {
-		throw "addItem unreal position, position diapason (0 - 7)";
-	}
+bool TPlayer::HasExtraInfo(const std::string& info) const {
+	return ExtraInfo.find(info) != ExtraInfo.end();
 }
-void RemoveItem(const int position) {
-	if (position >= 0 && position < 7) {
-		void RemoveItem(const int position);
-	} else {
-		throw "RemoveItem unreal position, position diapason (0 - 7)";
-	}
+void TPlayer::RemoveExtraInfo(const std::string& info) { // тут тоже аккуратно. только при проверке удаляем!
+	ExtraInfo.erase(ExtraInfo.find(info));
 }
-const std::vector<TItem*>& TPlayer::GetItems() const {
+
+void TPlayer::AddItemToPlaceAddItems(const std::shared_ptr<TItem> item) {
+	PlaceAddItems[item->GetCode()] = item;
+}
+const std::unordered_map<std::string, std::shared_ptr<TItem>>& TPlayer::GetPlaceAddItems() const {
+	return PlaceAddItems;
+}
+void TPlayer::RemoveAllItemsOnPlaceAddItems() {
+	PlaceAddItems.clear();
+}
+
+void TPlayer::AddItem(const std::shared_ptr<TItem> item) {
+	Items[item->GetCode()] = item;
+}
+const std::unordered_map<std::string, std::shared_ptr<TItem>>& TPlayer::GetItems() const {
 	return Items;
 }
+void TPlayer::RemoveAllItemsOnItems() {
+	Items.clear();
+}
+void TPlayer::RemoveItem(const std::string& code) { // это дело сделано опасно, надежда, что перед удалением, мы уверены, что этот предмет точно есть
+	for (auto item = Items.begin(); item != Items.end(); item++) {
+		if (item->first == code) {
+			Items.erase(item);
+			return;
+		}
+	}
+}
+bool TPlayer::HasItem(const std::string& code) const {
+	for (const auto& item: Items) {
+		if (item.first == code) {
+			return true;
+		} 
+	}
+	return false;
+}
+
 
 int TPlayer::GetAgility() const {
 	return Agility;
@@ -89,10 +113,13 @@ bool TPlayer::HasEnoughFlask(const int flask) const {
 }
 void TPlayer::DrinkFromFlask() {
 	SpendFlask(1);
-	IncreaseStrenght(2);
+	IncreaseStrength(2);
 }
-void TPlayer::IncreaseStrenght(const int strength) {
+void TPlayer::IncreaseStrength(const int strength) {
 	Strength = std::min(Strength + strength, MaxStrength);
+}
+void TPlayer::SpendStrength(const int strength) {
+	Strength -= strength;
 }
 
 std::tuple<int, int, int> TPlayer::GetRandomCharacteristics() const {
@@ -123,19 +150,24 @@ void TPlayer::SetCharacteristics() {
 void TPlayer::LockLuck(const int roll) {
 	Luck[roll - 1] = false;
 }
+bool TPlayer::UseLuck() {
+	int res = NDice::Roll6();
+	if (Luck[res - 1] == true) {
+		LockLuck(res);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void TPlayer::InitSpells(const std::vector<std::string>& spells) {
+	for (const auto& spell: spells) {
+		AddSpell(spell);
+	}
+}
 
 void TPlayer::AddSpell(const std::string& spell) {
 	Spells.insert(spell);
-}
-
-NJson::TJsonValue TPlayer::GetSpellsToJson() const {
-	NJson::TJsonValue spells;
-	int i = 0;
-	for (const auto& spell: Spells) {
-		spells[i] = spell;
-		i++;
-	}
-	return spells;
 }
 
 bool TPlayer::HasSpell(const std::string& nameSpell) const {
@@ -151,7 +183,24 @@ void TPlayer::UseSpell(const std::string& nameSpell) {
 	Spells.erase(currentSpell);
 }
 
+NJson::TJsonValue TPlayer::GetSpellsJson() const {
+	std::vector<std::string> spells;
+	for (const auto& spell: Spells) {
+		spells.push_back(spell);
+	}
+	return {{"MySpells", spells}};
+}
+
 NJson::TJsonValue TPlayer::ToJson() const {
+	std::vector<std::string> myItems;
+	for (const auto& item: Items) {
+		myItems.push_back(item.first);
+	}
+
+	std::vector<std::string> placeAddItems;
+	for (const auto& item: PlaceAddItems) {
+		placeAddItems.push_back(item.first);
+	}
 	return {
 		{"Name", UserName}, 
 		{"Gold", Gold},
@@ -161,7 +210,8 @@ NJson::TJsonValue TPlayer::ToJson() const {
 		{"Charisma", Charisma},
 		{"MaxStrength", MaxStrength},
 		{"Luck", Luck},
-		{"Spells", Spells},
-		//{"Items", Items}
+		{"MySpells", Spells},
+		{"MyItems", myItems},
+		{"PlaceAddItems", placeAddItems}
 	};
 }

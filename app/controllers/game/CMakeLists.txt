@@ -13,4 +13,5 @@ target_link_libraries(game PUBLIC
 	point
 	actions
 	option
+	items
 )

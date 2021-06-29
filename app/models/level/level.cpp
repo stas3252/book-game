@@ -1,13 +1,21 @@
 #include "level.h"
+#include <iostream>
 
 TLevel::TLevel(
+	const int id,
 	const std::string& text,
 	const std::vector<TOption>& options,
 	const std::vector<std::shared_ptr<TAction>>& actions
-): Text(text), Options(options), Actions(actions) {}
+): Id(id), Text(text), Options(options), Actions(actions) {}
 
-const std::vector<TOption>& TLevel::GetOptions() const {
-	return Options;
+std::vector<TOption> TLevel::GetOptions(const TPlayer& player) const {
+	std::vector<TOption> options;
+	for (const auto& option: Options) {
+		if (option.CanBeChoosen(player)) {
+			options.push_back(option);
+		}
+	}
+	return options;
 }
 
 const std::string& TLevel::GetText() const {
@@ -24,13 +32,14 @@ void TLevel::DoActions(TPlayer& player) {
 	}
 }
 
-NJson::TJsonValue TLevel::ToJson() const {
+NJson::TJsonValue TLevel::ToJson(const TPlayer& player) const {
 	std::vector<std::string> vs;
-	for (const auto& s: GetOptions()) {
-		vs.push_back(s.Text);
+	for (const auto& option: GetOptions(player)) {
+		vs.push_back(option.Text);
 	}
 	return {
 		{"Text", Text},
-		{"TextOptions", vs}
+		{"TextOptions", vs},
+		{"Id", Id}
 	};
 }

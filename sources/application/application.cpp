@@ -14,7 +14,7 @@ TApplication::TApplication() {
 	Server->Post("/api/level", [&](const httplib::Request& req, httplib::Response& res) {
 		NGameHandler::ApiLevelPost(Game, req, res);
 	});
-	Server->Post("api/set-spells", [&](const httplib::Request& req, httplib::Response& res) {
+	Server->Post("/api/set-spells", [&](const httplib::Request& req, httplib::Response& res) {
 		NGameHandler::ApiSetSpells(Game, req, res);
 	});
 }
